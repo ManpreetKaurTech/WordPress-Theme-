@@ -43,5 +43,44 @@ function mytheme_widgets_init() {
     ) );
 }
 add_action( 'widgets_init', 'mytheme_widgets_init' );
+/********  show preview  *********************************************/
+
+function mytheme_customize_register($wp_customize) {
+    // Site title live update
+    $wp_customize->get_setting('blogname')->transport = 'postMessage';
+
+    // Site description live update
+    $wp_customize->get_setting('blogdescription')->transport = 'postMessage';
+
+    // Add color setting
+    $wp_customize->add_setting('header_color', array(
+        'default' => '#000000',
+        'transport' => 'postMessage',
+    ));
+
+    // Add color control
+    $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'header_color', array(
+        'label' => __('Header Color', 'my-live-theme'),
+        'section' => 'colors',
+    )));
+}
+add_action('customize_register', 'mytheme_customize_register');
+
+// Live preview script
+function mytheme_customize_preview_js() {
+    wp_enqueue_script(
+        'mytheme-customizer',
+        get_template_directory_uri() . '/js/customizer.js',
+        array('customize-preview'),
+        false,
+        true
+    );
+}
+add_action('customize_preview_init', 'mytheme_customize_preview_js');
+
+/******** end preview code  ******************************************/
+
+add_filter( 'jpeg_quality', function( $arg ) { return 100; } );
+add_filter( 'jpeg_quality', function() { return 100; } );
 
 ?>
